@@ -1,0 +1,50 @@
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  }
+}
+.svg-animation{
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  transform: translate(-50%, 0%);
+  z-index: 1;
+  #path {
+    stroke-dasharray: 1500;
+    -webkit-animation: dash 6s linear forwards;
+       -moz-animation: dash 6s linear forwards;
+            animation: dash 6s linear forwards;
+  }
+  circle{
+    stroke: rgba(240,140,0, 0.45);
+  }
+}
+
+@include keyframes(dash) {
+  0% {
+    stroke-dashoffset: 1500;
+    stroke-width: 1;
+  }
+  70% {
+    stroke-width: 1;
+  }
+  80% {
+    stroke-width: 1;
+  }
+  90%{
+    stroke-width: 1;
+  }
+  100%{
+    stroke-width: 1;
+  }
+
+}

@@ -1,0 +1,66 @@
+<md-content class="md-padding home-view">
+  <form ng-submit="$event.preventDefault()" class="main-form">
+    <div layout="row" layout-align="center center">
+      <div>
+        <md-autocomplete
+            md-selected-item="homeCtrl.fromItem"
+            md-search-text="homeCtrl.searchTextFrom"
+            md-selected-item-change="homeCtrl.selectedItemChange(item,'from')"
+            md-items="item in homeCtrl.querySearch(homeCtrl.searchTextFrom) | orderBy: 'name'"
+            md-item-text="item.name"
+            md-min-length="0"
+            placeholder="From"
+            class="input-autocomplete">
+          <md-item-template>
+            <span md-highlight-text="homeCtrl.searchTextFrom" md-highlight-flags="^i">{{item.name}}</span>
+          </md-item-template>
+          <md-not-found>
+            No states matching "{{homeCtrl.searchTextFrom}}" were found.
+          </md-not-found>
+        </md-autocomplete>
+      </div>
+      <div>
+        <md-autocomplete
+            md-selected-item="homeCtrl.toItem"
+            md-search-text="homeCtrl.searchTextTo"
+            md-selected-item-change="homeCtrl.selectedItemChange(item,'to')"
+            md-items="item in homeCtrl.querySearch(homeCtrl.searchTextTo) | orderBy: 'name'"
+            md-item-text="item.name"
+            md-min-length="0"
+            placeholder="To"
+            class="input-autocomplete">
+          <md-item-template>
+            <span md-highlight-text="homeCtrl.searchTextTo" md-highlight-flags="^i">{{item.name}}</span>
+          </md-item-template>
+          <md-not-found>
+            No states matching "{{homeCtrl.searchTextTo}}" were found.
+          </md-not-found>
+        </md-autocomplete>
+      </div>
+      <div>
+        <md-button class="md-fab md-mini md-primary" aria-label="search" ng-click="homeCtrl.getAnalythics()">
+          <md-icon>
+            <i class="material-icons">search</i>
+          </md-icon>
+        </md-button>
+      </div>
+    </div>
+  </form>
+  <div layout="row" layout-align="center center">
+    <p class="padding-right-20">Arraival Delay on: </p>
+    <md-radio-group ng-model="homeCtrl.units" layout="row" ng-change="homeCtrl.changeUnits()">
+       <md-radio-button value="minutes" class="md-primary">Minutes</md-radio-button>
+       <md-radio-button value="ration" class="md-primary"> % Ratio (Elapsed time vs Delay) </md-radio-button>
+    </md-radio-group>
+  </div>
+  <div layout="row" layout-align="center center">
+    <p class="padding-right-20">Analyze per: </p>
+    <md-radio-group ng-model="homeCtrl.per" layout="row">
+       <md-radio-button value="days" class="md-primary">Days of the Month</md-radio-button>
+       <md-radio-button value="hours" class="md-primary">Departure Hours</md-radio-button>
+    </md-radio-group>
+  </div>
+  <div ng-class="{ 'graph-container':homeCtrl.data.length > 0, 'md-whiteframe-z1': homeCtrl.data.length > 0}">
+    <nvd3 options="homeCtrl.options" data="homeCtrl.data"></nvd3>
+  </div>
+</md-content>
