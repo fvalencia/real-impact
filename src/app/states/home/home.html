@@ -5,7 +5,6 @@
         <md-autocomplete
             md-selected-item="homeCtrl.fromItem"
             md-search-text="homeCtrl.searchTextFrom"
-            md-selected-item-change="homeCtrl.selectedItemChange(item,'from')"
             md-items="item in homeCtrl.querySearch(homeCtrl.searchTextFrom) | orderBy: 'name'"
             md-item-text="item.name"
             md-min-length="0"
@@ -23,7 +22,6 @@
         <md-autocomplete
             md-selected-item="homeCtrl.toItem"
             md-search-text="homeCtrl.searchTextTo"
-            md-selected-item-change="homeCtrl.selectedItemChange(item,'to')"
             md-items="item in homeCtrl.querySearch(homeCtrl.searchTextTo) | orderBy: 'name'"
             md-item-text="item.name"
             md-min-length="0"
@@ -47,20 +45,28 @@
     </div>
   </form>
   <div layout="row" layout-align="center center">
-    <p class="padding-right-20">Arraival Delay on: </p>
+    <p class="padding-right-20 bold">Arraival Delay on: </p>
     <md-radio-group ng-model="homeCtrl.units" layout="row" ng-change="homeCtrl.changeUnits()">
        <md-radio-button value="minutes" class="md-primary">Minutes</md-radio-button>
-       <md-radio-button value="ration" class="md-primary"> % Ratio (Elapsed time vs Delay) </md-radio-button>
+       <md-radio-button value="ratio" class="md-primary"> % Ratio (Elapsed time vs Delay) </md-radio-button>
     </md-radio-group>
   </div>
   <div layout="row" layout-align="center center">
-    <p class="padding-right-20">Analyze per: </p>
-    <md-radio-group ng-model="homeCtrl.per" layout="row">
+    <p class="padding-right-20 bold">Analyze per: </p>
+    <md-radio-group ng-model="homeCtrl.per" layout="row" ng-change="homeCtrl.changePer()">
        <md-radio-button value="days" class="md-primary">Days of the Month</md-radio-button>
        <md-radio-button value="hours" class="md-primary">Departure Hours</md-radio-button>
     </md-radio-group>
   </div>
-  <div ng-class="{ 'graph-container':homeCtrl.data.length > 0, 'md-whiteframe-z1': homeCtrl.data.length > 0}">
+  <div layout="row" layout-align="center center">
+    <md-switch ng-model="homeCtrl.correlation" aria-label="Switch 1" class="md-primary" ng-click="homeCtrl.changeScroll()">
+      Show Correlation Between Distances and Delays
+    </md-switch>
+  </div>
+  <div ng-class="{ 'graph-container':homeCtrl.data.length > 0, 'md-whiteframe-z1': homeCtrl.data.length > 0}" ng-if="homeCtrl.chartVisible">
     <nvd3 options="homeCtrl.options" data="homeCtrl.data"></nvd3>
+  </div>
+  <div ng-class="{ 'graph-container':homeCtrl.data2.length > 0, 'md-whiteframe-z1': homeCtrl.data2.length > 0}" ng-if="homeCtrl.correlation" id="crr">
+    <nvd3 options="homeCtrl.options2" data="homeCtrl.data2"></nvd3>
   </div>
 </md-content>
