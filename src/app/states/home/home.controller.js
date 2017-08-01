@@ -6,7 +6,7 @@
     .controller('HomeController', HomeController);
 
   /** @ngInject */
-  function HomeController($log, $timeout, HistoricFlyFactory, $mdDialog, GraphBuilderFactory, $mdToast, $anchorScroll, $location) {
+  function HomeController($log, $timeout, HistoricFlightsFactory, $mdDialog, GraphBuilderFactory, $mdToast, $anchorScroll, $location) {
     var vm = this;
 
     vm.airports = [];
@@ -14,6 +14,7 @@
     vm.per = 'hours';
     vm.chartVisible = true;
 
+    vm.initController = initController;
     vm.querySearch = querySearch;
     vm.getAnalythics = getAnalythics;
     vm.changeUnits = changeUnits;
@@ -23,11 +24,11 @@
     initController();
 
     function initController() {
-      HistoricFlyFactory.getAirPorts().then(function(airtports){
+      HistoricFlightsFactory.getAirPorts().then(function(airtports){
         vm.airports = airtports;
       });
 
-      HistoricFlyFactory.getDistanceDelays('01').then(function(result){
+      HistoricFlightsFactory.getDistanceDelays('01').then(function(result){
         vm.correlationData = result;
         paintGraph('lineChart');
       });
@@ -45,7 +46,7 @@
     function getAnalythics(){
       if(vm.fromItem && vm.fromItem.id && vm.toItem && vm.toItem.id){
         //We sent the month, emulating user input
-        HistoricFlyFactory.getDelaysOnMonthPer('01', vm.per,vm.fromItem.id, vm.toItem.id, vm.units).then(function(result){
+        HistoricFlightsFactory.getDelaysOnMonthPer('01', vm.per,vm.fromItem.id, vm.toItem.id, vm.units).then(function(result){
 
           if(result.length === 0){
             vm.chartVisible = false;
@@ -54,8 +55,10 @@
             vm.chartVisible = true;
           }
 
-          HistoricFlyFactory.getDistanceFromTo('01',vm.fromItem.id, vm.toItem.id).then(function(distance){
-            showToast('Current Selection Distance: '+distance+'mi');
+          HistoricFlightsFactory.getDistanceFromTo('01',vm.fromItem.id, vm.toItem.id).then(function(distance){
+            var message = 'Flight Distance: '+distance;
+            message+= 'mi, with a predicted delay of: '+Math.round(HistoricFlightsFactory.getPredictedY(distance))+' Minutes';
+            showToast(message);
           });
 
           vm.currentList = result;
@@ -107,7 +110,6 @@
         vm.options2 = graphBuilded.options;
         vm.data2 = graphBuilded.data;
       }
-
     }
 
     function getMonth(month){
@@ -144,8 +146,8 @@
       $mdToast.show(
         $mdToast.simple()
           .textContent(message)
-          .position('top right')
-          .hideDelay(6000)
+          .position('top bottom')
+          .hideDelay(0)
           .highlightClass('md-primary')
           .action('CLOSE')
       );

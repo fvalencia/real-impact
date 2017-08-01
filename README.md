@@ -18,7 +18,19 @@
 
 ### Notes
 
-* Developed and Tested on Google Chrome v59, Mac OS Sierra.
+* Developed and Tested on Google Chrome v59, Mac OS Sierra, in 18h.
+* For the Correlation between Distance and Delays, I implemented a Polynomial Regression base on the Flights data.
+* After the user inputs the from and to field and search for the data, you can see a Toast from Angular material showing the predicted flight delay.
+* I wanted to show every graph and information to the user in a usable way, that's why I created those radio buttons instead of creating a whole dashboard view.
+* You can see the live version [here][2]
+
+### Implementation
+Here are some of the libraries and plugins used for this:
+
+* [Angular Material Design][3]
+* [Correlation Prototype Class][4]
+* [Gulp][5]
+* [Angular NVD3 (For graphs)][6]
 
 ### How to run it.  
 
@@ -28,17 +40,26 @@ $ cd real-impact
 $ npm install && bower install
 ```
 
+**Test**
+```
+$ gulp test
+```
+Note: I created a spec for HomeController to show how to make tests with Jasmine, but didn't went through every function or directive, for time reasons.
+
 **Development**
 ```
 $ gulp serve
 ```
 
-**Production (Builded Version, just one .css and .js)**
+**Production (Builded Version)**
 ```
-$ npm install http-server -g
 $ gulp build
-$ http-server ./dist
 ```
-Note: You can run it in any server, but it is easier with `http-server`
+Note: I create a new repo for the builded version and that's the one I show in GitHub Pages
 
 [1]: https://github.com/Swiip/generator-gulp-angular
+[2]: https://fvalencia.github.io/real-impact-build/#!/
+[3]: https://material.angularjs.org/latest/
+[4]: https://codepen.io/RobertMenke/pen/ONvVXq
+[5]: https://gulpjs.com/
+[6]: http://nvd3.org/

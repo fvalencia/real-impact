@@ -481,15 +481,3 @@ PolynomialRegression.prototype.predictY = function(terms, x){
     }
     return result;
 };
-
-PolynomialRegression.runTest = function(degree, data){
-
-  var poly = new PolynomialRegression(data, degree);
-  var terms = poly.getTerms();
-
-  actualData.forEach(function(data){
-    regressionData.push({x: data.x, y: poly.predictY(terms, data.x)});
-  });
-
-  return {actual : actualData, regression : regressionData}
-};

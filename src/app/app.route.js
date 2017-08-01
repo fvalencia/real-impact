@@ -14,11 +14,11 @@
         controller: 'HomeController',
         controllerAs: 'homeCtrl',
         resolve:{
-          initData: function (HistoricFlyFactory) {
-            return HistoricFlyFactory.initData();
+          initData: function (HistoricFlightsFactory) {
+            return HistoricFlightsFactory.initData();
           },
-          initDataAirtports: function (HistoricFlyFactory) {
-            return HistoricFlyFactory.initDataAirports();
+          initDataAirtports: function (HistoricFlightsFactory) {
+            return HistoricFlightsFactory.initDataAirports();
           }
         }
       });

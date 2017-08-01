@@ -3,10 +3,10 @@
 
   angular
       .module('real-impact')
-      .factory('HistoricFlyFactory', HistoricFlyFactory);
+      .factory('HistoricFlightsFactory', HistoricFlightsFactory);
 
   /** @ngInject */
-  function HistoricFlyFactory($http, $q) {
+  function HistoricFlightsFactory($http, $q) {
 
     var self = this;
     self.data = null;
@@ -19,13 +19,14 @@
           getAirPorts: getAirPorts,
           getDelaysOnMonthPer: getDelaysOnMonthPer,
           getDistanceDelays: getDistanceDelays,
-          getDistanceFromTo: getDistanceFromTo
+          getDistanceFromTo: getDistanceFromTo,
+          getPredictedY: getPredictedY
     };
 
     function initData(){
       return $http({
           method: 'GET',
-          url: '/assets/data/historic-data.json'
+          url: 'assets/data/historic-data.json'
         }).then(function(result){
           self.data = result.data;
         }, function (err) {
@@ -36,7 +37,7 @@
     function initDataAirports() {
       return $http({
           method: 'GET',
-          url: '/assets/data/airports.json'
+          url: 'assets/data/airports.json'
         }).then(function(result){
           self.dataAirports = result.data;
         }, function (err) {
@@ -91,7 +92,7 @@
         if(dataFromTo.length > 0){
 
           if(per === 'days'){
-            groupByDays(dataFromTo).then(function (groupedData) {
+            groupBy(dataFromTo, 'FL_DATE').then(function (groupedData) {
               var values = [], delays, ratios;
               for (var day in groupedData) {
                 delays = getAvg(groupedData[day].delays);
@@ -106,7 +107,7 @@
               deferred.resolve(values);
             });
           }else{
-            groupByHours(dataFromTo).then(function (groupedData) {
+            groupBy(dataFromTo, 'CRS_DEP_TIME').then(function (groupedData) {
               var values = [], delays, ratios, label;
               for (var hour in groupedData) {
                 delays = getAvg(groupedData[hour].delays);
@@ -151,34 +152,12 @@
       return deferred.promise;
     }
 
-    function groupByDays(list) {
+    function groupBy(list, groupBy) {
       var deferred = $q.defer();
       var key, group = {};
 
       list.forEach(function (element, i) {
-        key = element['FL_DATE'];
-        if(!group[key]){
-          group[key] = { delays: [], ratios: [] };
-        }
-
-        group[key].delays.push(element['ARR_DELAY']);
-        group[key].ratios.push((element['ARR_DELAY']/element['CRS_ELAPSED_TIME']) * 100);
-
-        if(i === list.length - 1 ){
-          deferred.resolve(group);
-        }
-
-      });
-
-      return deferred.promise;
-    }
-
-    function groupByHours(list) {
-      var deferred = $q.defer();
-      var key, group = {};
-
-      list.forEach(function (element, i) {
-        key = element['CRS_DEP_TIME'];
+        key = element[groupBy];
         if(!group[key]){
           group[key] = { delays: [], ratios: [] };
         }
@@ -216,12 +195,12 @@
             toAnalyze.push({ x: parseInt(distance)});
           };
 
-          var poly = new PolynomialRegression(values, 40);
-          var terms = poly.getTerms();
+          self.poly = new PolynomialRegression(values, 40);
+          self.terms = self.poly.getTerms();
           var regressionData = [];
 
           toAnalyze.forEach(function(row, j){
-            regressionData.push({x: row.x, y: poly.predictY(terms, row.x)});
+            regressionData.push({x: row.x, y: self.poly.predictY(self.terms, row.x)});
             if(j === toAnalyze.length - 1 ){
               deferred.resolve(regressionData);
             }
@@ -230,6 +209,10 @@
       });
 
       return deferred.promise;
+    }
+
+    function getPredictedY(distance) {
+      return self.poly.predictY(self.terms, distance);
     }
 
     function getDistanceFromTo(month, from, to) {
